@@ -36,7 +36,7 @@ Ask clarifying questions:
 - What are the outputs?
 - What processing/transformation happens?
 - Configuration options needed?
-- Does it need a UI (inline view, fullscreen view)?
+- Does it need custom UI views? (inline, summary, fullscreen - not all components do)
 - What commands/controls for users?
 - What HTTP API for external control?
 
@@ -675,20 +675,27 @@ Do NOT use `extraValidation` for basic field validation - use Zod in configForm 
 
 ---
 
-## Step 7: Fullscreen UI (if applicable)
+## Step 7: UI Views (optional)
 
-Create `fullscreen-view.tsx`:
+Not all components need custom UI. Whether to add inline, summary, or fullscreen views
+is a decision made during the planning phase based on the component's requirements.
+Skip this step entirely if the component doesn't need custom views.
+
+**View types available:**
+- `inline` - Small view shown in the node editor
+- `summary` - Compact status display
+- `fullscreen` - Full-page interactive view (e.g. for monitoring, control panels)
+
+**Creating a view:**
 
 ```typescript
-import { useState, useEffect } from "react";
-
-interface FullScreenProps {
+interface ViewProps {
   state: ComponentState;
   config: ComponentConfig;
   sendCommand: (cmd: ComponentCommand) => void;
 }
 
-function FullScreen({ state, config, sendCommand }: FullScreenProps) {
+function FullScreen({ state, config, sendCommand }: ViewProps) {
   return (
     <div className="min-h-screen h-full w-full bg-gray-900 text-white">
       {/* Implementation */}
@@ -699,14 +706,16 @@ function FullScreen({ state, config, sendCommand }: FullScreenProps) {
 export default FullScreen;
 ```
 
-Register in info.ts:
+**Register in info.ts:**
 ```typescript
 import FullscreenView from './fullscreen-view';
+import InlineView from './inline-view';
 
 // In defineComponent:
 runtime: {
   // ...existing handlers...
-  fullscreen: FullscreenView
+  fullscreen: FullscreenView,
+  inline: InlineView
 }
 ```
 
@@ -741,12 +750,10 @@ llmHints: [
 
 ## Success Criteria
 
-- [ ] All 8 steps completed
 - [ ] Build passes
 - [ ] ESLint passes
 - [ ] Tests passing (commands, API, state, events)
-- [ ] Manual testing successful
 - [ ] Planning document complete
 - [ ] LLM hints added
 - [ ] Validation implemented
-- [ ] Fullscreen UI functional (if applicable)
+- [ ] UI views functional (if planned)
