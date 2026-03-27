@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "norsk-studio",
-      "source": "..",
+      "source": ".",
       "description": "Skills for developing and testing Norsk Studio components",
       "version": "1.0.0"
     }
