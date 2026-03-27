@@ -1,0 +1,14 @@
+{
+  "name": "norsk-studio-plugins",
+  "owner": {
+    "name": "id3as"
+  },
+  "plugins": [
+    {
+      "name": "norsk-studio",
+      "source": "..",
+      "description": "Skills for developing and testing Norsk Studio components",
+      "version": "1.0.0"
+    }
+  ]
+}
