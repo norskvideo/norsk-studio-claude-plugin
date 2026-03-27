@@ -40,21 +40,14 @@ Ask clarifying questions:
 - What commands/controls for users?
 - What HTTP API for external control?
 
-The best example of a component sharing commands/API is `input.file` - refer to it when implementing command/route handlers.
-
 ## Phase 2: Research Similar Components
 
-Search for similar existing components in your workspace:
+Look at existing components in your workspace for patterns to follow. If you scaffolded
+your plugin with `npx @norskvideo/norsk-studio studio-plugin`, the generated example
+components (`input.example`, `processor.example`, `output.example`) demonstrate the
+standard patterns for each component type.
 
-```bash
-# Find components by category
-ls src/processor.* src/input.* src/output.*
-
-# Look at similar implementations
-# Each component has: info.ts, runtime.ts, types.source.yaml
-```
-
-Key files to read:
+Each component has three key files:
 - `info.ts` - Subscription model, config form, validation
 - `runtime.ts` - Norsk SDK node usage, event handling
 - `types.source.yaml` - Schema definitions (Config, State, Events, Commands, API paths)
@@ -90,7 +83,8 @@ Determine which SDK nodes are needed from `@norskvideo/norsk-sdk`:
 
 ## Phase 4: Create Planning Document
 
-Create a planning document with this structure:
+Create a planning document (e.g. `docs/<component-name>.md` or wherever makes sense
+for the project) with this structure:
 
 ### Section 1: Executive Summary
 - Purpose and key features

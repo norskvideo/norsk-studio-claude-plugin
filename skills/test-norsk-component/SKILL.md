@@ -831,17 +831,17 @@ afterEach(async () => {
 ## Build and Run
 
 ```bash
-# Build your workspace
-npm --workspace workspaces/<your-workspace> run build
+# Build
+npm run build
 
 # Run a specific test by description match
-npm --workspace workspaces/<your-workspace> test -- --grep "My Component"
+npm test -- --grep "My Component"
 
 # Run with debug logging
-LOG_LEVEL=debug npm --workspace workspaces/<your-workspace> test -- --grep "My Component"
+LOG_LEVEL=debug npm test -- --grep "My Component"
 
 # Lint
-npm --workspace workspaces/<your-workspace> run build:eslint
+npm run lint
 ```
 
 Tests require a running Norsk Engine. In CI, this is typically a Docker container.
