@@ -738,6 +738,20 @@ llmHints: [
 
 ---
 
+## Writing Tests
+
+See the **test-norsk-component** skill for the complete reference on shared test libraries,
+assertion helpers, and patterns for testing inputs, processors, and outputs. It covers:
+
+- Test source helpers (`video()`, `audio()`, `videoAndAudio()`)
+- Assertion helpers (`assertNodeOutputsVideoFrames`, `waitForAssert`, `TraceSink`)
+- Async waiting (`waitForCondition`, `waitForEvent`)
+- Wiring sources via `YamlBuilder` subscriptions or `overrideSources`/`ComponentSubscriptions`
+- HTTP API endpoint testing with Express
+- Complete test templates for each component type
+
+---
+
 ## Key Principles
 
 1. **Incremental verification** - Build and test after each step
