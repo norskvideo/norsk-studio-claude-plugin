@@ -19,12 +19,12 @@ The planning stage is non-negotiable. A document must be produced and agreed to 
 
 ## Process Overview
 
-1. **Gather Requirements** (5-10 min)
-2. **Research Similar Components** (10-15 min)
-3. **Identify Norsk SDK Nodes** (10-15 min)
-4. **Create Planning Document** (15-20 min)
-5. **Confirm Plan with User** (5 min)
-6. **Begin Implementation** (6-8 hours)
+1. **Gather Requirements**
+2. **Research Similar Components**
+3. **Identify Norsk SDK Nodes**
+4. **Create Planning Document**
+5. **Confirm Plan with User**
+6. **Begin Implementation**
 
 ---
 
@@ -360,7 +360,7 @@ npm test -- --grep "<Component Name>"
 
 ---
 
-## Step 1: Scaffold Files (10-15 min)
+## Step 1: Scaffold Files
 
 Create the component directory with three files. Components are auto-discovered
 by `autoRegisterComponents` - no manual registration needed. Just create the
@@ -507,7 +507,7 @@ npm run lint
 
 ---
 
-## Step 2: Add State + Events Schema (15-20 min)
+## Step 2: Add State + Events Schema
 
 ### Update types.source.yaml
 ```yaml
@@ -581,7 +581,7 @@ describe("<Component Name>", () => {
 
 ---
 
-## Step 3: Implement Runtime Core (1-1.5 hours)
+## Step 3: Implement Runtime Core
 
 Key tasks:
 1. Implement subscription handler
@@ -627,7 +627,7 @@ setVolume(level: number, muted: boolean): void {
 
 ---
 
-## Step 4: Add Extended Functionality (1-1.5 hours)
+## Step 4: Add Extended Functionality
 
 - Add complex processing nodes
 - Implement multi-stream handling
@@ -636,7 +636,7 @@ setVolume(level: number, muted: boolean): void {
 
 ---
 
-## Step 5: Add Commands and APIs (1.5-2 hours)
+## Step 5: Add Commands and APIs
 
 1. Define Commands schema in types.source.yaml
 2. Define API paths in types.source.yaml (under `paths:` section)
@@ -658,7 +658,7 @@ import { assertUnreachable } from '@norskvideo/norsk-studio/lib/shared/util';
 
 ---
 
-## Step 6: Add Form Validation (15-20 min)
+## Step 6: Add Form Validation
 
 Add Zod validators to `configForm` field hints in `info.ts`.
 
@@ -675,7 +675,7 @@ Do NOT use `extraValidation` for basic field validation - use Zod in configForm 
 
 ---
 
-## Step 7: Fullscreen UI (1.5-2 hours, if applicable)
+## Step 7: Fullscreen UI (if applicable)
 
 Create `fullscreen-view.tsx`:
 
@@ -712,7 +712,7 @@ runtime: {
 
 ---
 
-## Step 8: UX Polish (30-45 min)
+## Step 8: UX Polish
 
 - Add tooltips and help text to configForm
 - Add visual feedback for states
@@ -738,21 +738,6 @@ llmHints: [
 5. **Auto-discovery** - No manual registration needed; just create the directory
 6. **Test thoroughly** - Test commands, API endpoints, state changes, events
 7. **Schema-first** - Define types.source.yaml first, then implement
-
-## Estimated Timeline
-
-| Phase | Duration |
-|-------|----------|
-| Planning & Analysis | 30-60 min |
-| Step 1: Scaffold | 10-15 min |
-| Step 2: State/Events | 15-20 min |
-| Step 3: Runtime Core | 1-1.5 hours |
-| Step 4: Extended Features | 1-1.5 hours |
-| Step 5: Commands & APIs | 1.5-2 hours |
-| Step 6: Validation | 15-20 min |
-| Step 7: Fullscreen UI | 1.5-2 hours |
-| Step 8: UX Polish | 30-45 min |
-| **Total** | **8-10 hours** |
 
 ## Success Criteria
 
