@@ -28,6 +28,26 @@ The planning stage is non-negotiable. A document must be produced and agreed to 
 
 ---
 
+## Before starting: which context are you in?
+
+Two layouts share this skill. Most steps are the same; a few diverge on
+paths and commands. Decide up front, then watch for **Plugin mode:** notes
+in the steps where it matters.
+
+- **Norsk-studio monorepo**: paths look like
+  `workspaces/built-ins/<category>.<name>/...`, build commands use
+  `npm --workspace`, components are auto-discovered from the workspace.
+  The rest of this skill describes this path unless flagged.
+- **Customer plugin via norsk-ctl**: paths look like
+  `<workingDirectory>/plugins/<name>/...`. You scaffold via `plugin.create`
+  (norsk-ctl MCP tool) or `npx @norskvideo/norsk-studio studio-plugin`
+  (CLI). Build commands run inside the plugin directory
+  (`cd <wd>/plugins/<name>; npm install; npm run build`). Component
+  auto-discovery still applies. Steps where paths or commands diverge will
+  say "**Plugin mode:**" inline.
+
+---
+
 ## Phase 1: Gather Requirements
 
 Ask clarifying questions:
@@ -425,6 +445,10 @@ npm run build
 npm test -- --grep "<Component Name>"
 ```
 
+**Plugin mode:** run these from inside the plugin directory
+(`cd <workingDirectory>/plugins/<name>`), not from a monorepo root. The
+plugin's own `package.json` carries the scripts.
+
 ---
 
 ## Step 1: Scaffold Files
@@ -433,6 +457,13 @@ Create the component directory with three files. Components are auto-discovered
 by `autoRegisterComponents` - no manual registration needed. Just create the
 directory, add the files, and build.
 
+**Plugin mode:** scaffold the plugin itself first via `plugin.create`
+(norsk-ctl MCP) or `npx @norskvideo/norsk-studio studio-plugin` (CLI), then
+add the component inside `<workingDirectory>/plugins/<name>/src/<category>.<name>/`.
+Run `npm install` in the plugin directory before the first build — that's
+also what lands the SDK at `node_modules/@norskvideo/norsk-sdk/lib/src/`
+for Phase 3's Path 2.
+
 ### Directory structure
 ```
 src/<category>.<name>/
@@ -440,6 +471,10 @@ src/<category>.<name>/
   runtime.ts
   types.source.yaml
 ```
+
+In the monorepo this sits under `workspaces/built-ins/<category>.<name>/`.
+In plugin mode it sits under
+`<workingDirectory>/plugins/<name>/src/<category>.<name>/`.
 
 ### Minimal types.source.yaml
 ```yaml
@@ -571,6 +606,11 @@ export class ComponentNode implements CreatedMediaNode {
 npm run build
 npm run lint
 ```
+
+**Plugin mode:** run from the plugin directory
+(`cd <workingDirectory>/plugins/<name>`). In the monorepo, prefer the
+workspace-scoped form (`npm run --workspace=<workspace> build`) so you
+don't rebuild the whole tree on each step.
 
 ---
 
