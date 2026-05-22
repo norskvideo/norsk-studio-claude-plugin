@@ -15,6 +15,8 @@ description: |
 
 # Testing Norsk Studio Components
 
+This skill is a reference for the shared test libraries. For component-design *process*, see the `plan-norsk-component` skill — that's where the 8-step roadmap lives.
+
 This guide covers the shared test libraries published in the `@norskvideo/norsk-studio` npm package.
 All utilities are available as compiled JS + type declarations under `lib/`.
 
