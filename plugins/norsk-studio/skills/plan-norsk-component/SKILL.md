@@ -54,32 +54,105 @@ Each component has three key files:
 
 ## Phase 3: Identify Norsk SDK Nodes
 
-Determine which SDK nodes are needed from `@norskvideo/norsk-sdk`:
+### Two surfaces, two catalogues — don't conflate them
 
-**Input Nodes:**
-- `norsk.input.whip()` - WebRTC WHIP input
-- `norsk.input.rtmpServer()` - RTMP input
-- `norsk.input.udpTs()` - UDP TS input
-- `norsk.input.srt()` - SRT input
+You are designing a **Studio component**, which internally calls **Norsk
+SDK nodes** in its `runtime.ts`. These are different layers with different
+authoritative catalogues, discovered through different tools:
 
-**Audio Processing:**
-- `norsk.processor.transform.audioGain()` - Volume control
-- `norsk.processor.transform.audioMix()` - Mix multiple audio sources
-- `norsk.processor.transform.audioEncode()` - Audio encoding
+| Layer | What it is | Authoritative catalogue | How to discover |
+|---|---|---|---|
+| **Norsk SDK nodes** | Primitives the `runtime.ts` calls — `norsk.input.srt()`, `norsk.processor.transform.videoEncode()`, subtitle / caption stream types, etc. | `@norskvideo/norsk-sdk` package — the `.d.ts` files. | Read / Grep the SDK on disk (see below). |
+| **Studio components** | Catalogue items wired into a workflow — sources, processors, outputs that *use* SDK nodes internally. | The running Studio's component registry. | `studio.<id>.search_components` via the Studio MCP (when norsk-ctl is brokering Studio). |
 
-**Video Processing:**
-- `norsk.processor.transform.videoEncode()` - Video encoding
-- `norsk.processor.transform.videoDecode()` - Video decoding
-- `norsk.processor.transform.videoCompose()` - Compose multiple videos
+Workflow authoring is the Studio-component case. Component authoring
+(this skill) is the SDK-node case. Confusing the two — for example,
+treating a Studio-component name as if it were an SDK primitive, or vice
+versa — is a known failure mode.
 
-**Output Nodes:**
-- `norsk.output.whep()` - WebRTC WHEP output
-- `norsk.output.rtmpServer()` - RTMP output
-- `norsk.output.cmafMultiVariant()` - CMAF output
+### Find the SDK on disk
 
-**Utility:**
-- `norsk.processor.transform.streamKeyOverride()` - Change stream key
-- `norsk.processor.transform.streamMetadataOverride()` - Change metadata
+The SDK type definitions are the source of truth. There are three ways to
+get them in front of Read/Grep; the full recipe is at
+`norsk://recipes/sdk` when you are connected to a norsk-ctl MCP. In short:
+
+1. **In a running Studio container.** Once `sdk.stage` ships on the
+   norsk-ctl MCP, call `sdk.stage { instanceId }` and the daemon copies
+   the SDK out to a host path you can Read/Grep. In the interim,
+   `docker cp <container>:/usr/src/app/node_modules/@norskvideo/norsk-sdk
+   <somewhere>` does the same job manually. This path pins the SDK
+   version to the running engine exactly.
+
+2. **In a scaffolded plugin's `node_modules`.** Once `plugin.create`
+   (norsk-ctl MCP) or `npx @norskvideo/norsk-studio studio-plugin` (CLI)
+   has scaffolded the plugin and `npm install` has run, the SDK is at
+   `<workingDirectory>/plugins/<name>/node_modules/@norskvideo/norsk-sdk/lib/src/`.
+   Plugin mode authors are usually here already; Read/Grep directly with
+   no extra tooling.
+
+3. **Hosted docs.** `WebFetch
+   https://docs.norsk.video/media-sdk/latest/index.html`. Reachable
+   without a running instance or a scaffold, but always "latest" — may
+   not match the version your instance runs.
+
+### Navigating the SDK once you have it
+
+- **Entry point: `lib/src/sdk.d.ts`.** Start there. The `Norsk` class
+  exposes `input`, `processor`, `processor.transform`, `output`,
+  `inspect`, `mediaStore` — that is where the verbs live.
+- **`@public` JSDoc tags mark the customer-facing API.** Anything not
+  tagged `@public` is internal and unsafe to depend on across versions.
+- **`norsk.input.srt` etc. are methods on classes, not top-level
+  exports.** `NorskInput` carries the input methods, `NorskProcessor`
+  the processor methods, and so on. A regex looking for
+  `export (function|interface|type) <name>` will miss them. Use `Grep`
+  for the verb name itself (e.g. `Grep "subtitle" lib/src/`,
+  `Grep "srt\b" lib/src/`) — the SDK is ~8200 lines across ~14 `.d.ts`
+  files, well within reach of a focused search.
+- **Settings interfaces** are co-located with the verbs (e.g.
+  `SrtInputSettings` next to `norsk.input.srt`). Search for the verb
+  name first, then read the surrounding declarations.
+- **Barrel exports** (`export * from "./types"`) and cross-package
+  re-exports (`export { ... } from "@norskvideo/norsk-api/..."`) mean
+  enumeration via a single file isn't possible; follow `sdk.d.ts` out
+  to its targets.
+
+### Worked examples (illustrative, not exhaustive)
+
+The following groupings show **what a few SDK calls look like in a
+`runtime.ts`** — they are *not* a catalogue. Query the SDK as above
+for the real surface. Subtitle / caption nodes, GPU-specific encode
+variants, mediaStore primitives, and many others are intentionally
+absent from this snapshot.
+
+**Input examples:**
+- `norsk.input.whip()` — WebRTC WHIP input
+- `norsk.input.rtmpServer()` — RTMP input
+- `norsk.input.udpTs()` — UDP TS input
+- `norsk.input.srt()` — SRT input
+
+**Audio processing examples:**
+- `norsk.processor.transform.audioGain()` — volume control
+- `norsk.processor.transform.audioMix()` — mix multiple audio sources
+- `norsk.processor.transform.audioEncode()` — audio encoding
+
+**Video processing examples:**
+- `norsk.processor.transform.videoEncode()` — video encoding
+- `norsk.processor.transform.videoDecode()` — video decoding
+- `norsk.processor.transform.videoCompose()` — compose multiple videos
+
+**Output examples:**
+- `norsk.output.whep()` — WebRTC WHEP output
+- `norsk.output.rtmpServer()` — RTMP output
+- `norsk.output.cmafMultiVariant()` — CMAF output
+
+**Utility examples:**
+- `norsk.processor.transform.streamKeyOverride()` — change stream key
+- `norsk.processor.transform.streamMetadataOverride()` — change metadata
+
+If your problem domain isn't covered above, that does **not** mean Norsk
+can't do it. Search the SDK — the list above is a sketch, not the
+inventory.
 
 ## Phase 4: Create Planning Document
 
